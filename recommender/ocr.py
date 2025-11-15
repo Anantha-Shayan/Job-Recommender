@@ -31,54 +31,68 @@ import streamlit as st
         
 #pdf to text
 def pdf_resume(file):
-    file_bytes = file.read()    # bytes of file will be stored (all img/pdf/docx are just sequence of bytes)
+    file_bytes = file.read()
     result = ""
     images = []
 
-    # Render images
+    # Render images using PyMuPDF
     doc = fitz.open(stream=file_bytes, filetype="pdf")
     for page_num in range(len(doc)):
         page = doc.load_page(page_num)
         pix = page.get_pixmap()
+        # create a PIL Image from pix
         img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
-        images.append(img)
+
+        # convert PIL image to PNG bytes
+        buf = io.BytesIO()
+        img.save(buf, format="PNG")
+        images.append(buf.getvalue())
     doc.close()
 
     # Extract text
-    with pdfplumber.open(io.BytesIO(file_bytes)) as pdf:    #io.BytesIO automatically allocates memory in-                                                             
-        for page in pdf.pages:                              #RAM and sores the file there instead of in disk
+    with pdfplumber.open(io.BytesIO(file_bytes)) as pdf:
+        for page in pdf.pages:
             result += page.extract_text() or ""
-            
+
     return [result, images]
-    # global text
-        # text = result
-        
+
+
 # image to text
 def img_resume(file):
-    #pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files (x86)\Tesseract-OCR\tesseract'
-    #img = Image.open('D:\\python\\job_rec\\recommender\\resume.png')
-    # print(pytesseract.image_to_string(img))
+    # read the uploaded file bytes
     img_bytes = file.read()
+
+    # For OCR: easyocr works with numpy arrays or PIL; keep it simple:
     reader = easyocr.Reader(['en'])
-    result = reader.readtext(img_bytes, detail = 0)
-    return [result,file]
-    # global text
-    # text = result
-    
+    # easyocr can accept bytes via numpy; use PIL to open then pass to reader.readtext
+    pil_img = Image.open(io.BytesIO(img_bytes)).convert("RGB")
+    # get numpy array for easyocr
+    import numpy as np
+    np_img = np.array(pil_img)
+
+    result = reader.readtext(np_img, detail=0)
+
+    # return OCR result and list of image bytes (keep same shape as pdf_resume)
+    return [result, [img_bytes]]
+
+
+# docx to text
 def docx_resume(file):
     with tempfile.TemporaryDirectory() as tmpdir:
-        docx_path = os.path.join(tmpdir,file.name)
+        docx_path = os.path.join(tmpdir, file.name)
         file.seek(0)
-        with open(docx_path,"wb") as f:    # wb = write binary (pdf/img/docx are just a sequence of bytes)
+        with open(docx_path, "wb") as f:
             f.write(file.read())
-        # Convert DOCX to PDF
+
         pdf_path = os.path.join(tmpdir, "resume.pdf")
-        docx2pdf.convert(docx_path, pdf_path)  # returns None
-        # Open the PDF in binary mode and pass to pdf_resume
+        # convert docx -> pdf
+        docx2pdf.convert(docx_path, pdf_path)
+
+        # open the PDF and pass the file object to pdf_resume exactly once
         with open(pdf_path, "rb") as pdf_file:
-            text,image = pdf_resume(pdf_file)[0],pdf_resume(pdf_file)[1] 
-            
-    return [text,image]
+            text, images = pdf_resume(pdf_file)
+
+    return [text, images]
 
 # with open('D:\\python\\job_rec\\recommender\\RESUME.pdf','r') as file:
 #     filename = file.filename.lower()
@@ -130,6 +144,7 @@ if st.session_state.document_text:
     with st.expander("📜 Extracted Image"):
         images = []
         for img_bytes in st.session_state.document_image:
+            # img_bytes is expected to be raw image bytes (PNG/JPEG)
             img = Image.open(io.BytesIO(img_bytes))
             images.append(img)
             st.image(img, use_container_width=True)
