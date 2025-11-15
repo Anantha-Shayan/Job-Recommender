@@ -1,26 +1,16 @@
-# create/edit .gitignore at repo root
-@"
-# Python
-__pycache__/
-*.py[cod]
-*.pyo
-*.pyd
+﻿# Node
+node_modules/
+tech_job_listing/node_modules/
 
-# Virtual environments
+# Python / venv
 JRenv/
 venv/
 env/
 .venv/
 
-# VS Code
+# Editor / OS
 .vscode/
-
-# Byte-compiled / caches
-*.egg-info/
-.eggs/
-pip-wheel-metadata/
-
-# OS
 .DS_Store
-Thumbs.db
-"@ > .gitignore
+
+# env files
+.env
