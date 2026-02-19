@@ -8,11 +8,11 @@ import docx2pdf
 import fitz #PyMuPdf
 import tempfile
 import io
-import flask
-import requests
-from fastapi import FastAPI, HTTPException
+#import flask
+# import requests
+# from fastapi import FastAPI, HTTPException
 import streamlit as st
-
+from Layout_detection_and_Semantic_segmentation import process_document_for_layout_and_semantic
 
 #app = FastAPI(title = "Resume")
 
@@ -58,7 +58,7 @@ def pdf_resume(file):
 
 
 # image to text
-def img_resume(file):
+def img_resume(file): """Image parser (easyocr) is not even close to accurate. Change is the end"""
     # read the uploaded file bytes
     img_bytes = file.read()
 
@@ -94,6 +94,10 @@ def docx_resume(file):
 
     return [text, images]
 
+
+#f = io.open('D:\\python\\job_rec\\recommender\\Screenshot (337).png',encoding='utf8')
+with open('D:\\python\\job_rec\\recommender\\ss.png','rb') as f:
+    print(img_resume(f))
 # with open('D:\\python\\job_rec\\recommender\\RESUME.pdf','r') as file:
 #     filename = file.filename.lower()
 #     if filename.endswith('.pdf'):
@@ -106,65 +110,67 @@ def docx_resume(file):
 #         print("Enter only pdf/jpg/docx")
 
 #streamlit ui      
-st.set_page_config(page_title="Resume Parsing", page_icon="🤖", layout="wide")
-st.title("📄 Resume Parsing")
+# st.set_page_config(page_title="Resume Parsing", page_icon="🤖", layout="wide")
+# st.title("📄 Resume Parsing")
 
-st.sidebar.header("Upload Document")
-uploaded_file = st.sidebar.file_uploader(
-    "Upload a PDF, DOCX, or Image file",
-    type=["pdf", "docx", "png", "jpg", "jpeg"]
-)
+# st.sidebar.header("Upload Document")
+# uploaded_file = st.sidebar.file_uploader(
+#     "Upload a PDF, DOCX, or Image file",
+#     type=["pdf", "docx", "png", "jpg", "jpeg"]
+# )
 
-if "chat_history" not in st.session_state:
-    st.session_state.chat_history = []
-if "document_text" not in st.session_state:
-    st.session_state.document_text = ""
+# if "chat_history" not in st.session_state:
+#     st.session_state.chat_history = []
+# if "document_text" not in st.session_state:
+#     st.session_state.document_text = ""
 
-if uploaded_file is not None:
-    file_type = uploaded_file.name.split(".")[-1].lower()
-    with st.spinner("🔍 Extracting text..."):
-        if file_type == "pdf":
-            text,image = pdf_resume(uploaded_file)
-        elif file_type == "docx":
-            text,image = docx_resume(uploaded_file)
-        elif file_type in ["png", "jpg", "jpeg"]:
-            text,image = img_resume(uploaded_file)
-        else:
-            text = "Unsupported file type!"
-            image = "Invalid"
-    st.session_state.document_text = text
-    st.session_state.document_image = image
+# if uploaded_file is not None:
+#     file_type = uploaded_file.name.split(".")[-1].lower()
+#     with st.spinner("🔍 Extracting text..."):
+#         if file_type == "pdf":
+#             text,image = pdf_resume(uploaded_file)
+#         elif file_type == "docx":
+#             text,image = docx_resume(uploaded_file)
+#         elif file_type in ["png", "jpg", "jpeg"]:
+#             text,image = img_resume(uploaded_file)
+#         else:
+#             text = "Unsupported file type!"
+#             image = "Invalid"
+#     st.session_state.document_text = text
+#     st.session_state.document_image = image
+#     doc_results = process_document_for_layout_and_semantic(file_bytes=uploaded_file.read(), image_bytes_list=image)
+
     
 
-# ---------- Show extracted text ----------
-if st.session_state.document_text:
-    with st.expander("📜 Extracted Document Text"):
-        st.text_area("", st.session_state.document_text, height=200)
+# # ---------- Show extracted text ----------
+# if st.session_state.document_text:
+#     with st.expander("📜 Extracted Document Text"):
+#         st.text_area("", st.session_state.document_text, height=200)
             
-    with st.expander("📜 Extracted Image"):
-        images = []
-        for img_bytes in st.session_state.document_image:
-            # img_bytes is expected to be raw image bytes (PNG/JPEG)
-            img = Image.open(io.BytesIO(img_bytes))
-            images.append(img)
-            st.image(img, use_container_width=True)
+#     with st.expander("📜 Extracted Image"):
+#         images = []
+#         for img_bytes in st.session_state.document_image:
+#             # img_bytes is expected to be raw image bytes (PNG/JPEG)
+#             img = Image.open(io.BytesIO(img_bytes))
+#             images.append(img)
+#             st.image(img, use_container_width=True)
 
-# ---------- Chat Interface ----------
-st.subheader("💬 Chat with Document")
+# # ---------- Chat Interface ----------
+# st.subheader("💬 Chat with Document")
 
-user_input = st.text_input("Ask something about the document...", key="user_input")
-if st.button("Send") and user_input.strip():
-    user_msg = {"role": "user", "content": user_input}
-    st.session_state.chat_history.append(user_msg)
+# user_input = st.text_input("Ask something about the document...", key="user_input")
+# if st.button("Send") and user_input.strip():
+#     user_msg = {"role": "user", "content": user_input}
+#     st.session_state.chat_history.append(user_msg)
 
-    # Dummy bot response (replace with LangChain or API call)
-    response = f"I received your question.\n(Soon, I’ll analyze your document for a real answer!)"
-    bot_msg = {"role": "assistant", "content": response}
-    st.session_state.chat_history.append(bot_msg)
+#     # Dummy bot response (replace with LangChain or API call)
+#     response = f"I received your question.\n(Soon, I’ll analyze your document for a real answer!)"
+#     bot_msg = {"role": "assistant", "content": response}
+#     st.session_state.chat_history.append(bot_msg)
 
-# ---------- Display Chat ----------
-for chat in st.session_state.chat_history:
-    if chat["role"] == "user":
-        st.markdown(f"🧑‍💻 **You:** {chat['content']}")
-    else:
-        st.markdown(f"🤖 **Bot:** {chat['content']}")
+# # ---------- Display Chat ----------
+# for chat in st.session_state.chat_history:
+#     if chat["role"] == "user":
+#         st.markdown(f"🧑‍💻 **You:** {chat['content']}")
+#     else:
+#         st.markdown(f"🤖 **Bot:** {chat['content']}")
