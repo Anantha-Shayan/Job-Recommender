@@ -4,9 +4,6 @@ tech_job_listing/node_modules/
 
 # Python / venv
 JRenv/
-venv/
-env/
-.venv/
 
 # Editor / OS
 .vscode/

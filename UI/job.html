@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>JobAI Connect - Main Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1132d4",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101322",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-50 w-full bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between h-16 items-center">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-2">
+<div class="bg-primary text-white p-1.5 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined !text-2xl">rocket_launch</span>
+</div>
+<h1 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">JobAI <span class="text-primary">Connect</span></h1>
+</div>
+<nav class="hidden md:flex space-x-8">
+<a class="text-primary font-semibold border-b-2 border-primary px-1 pt-1 text-sm" href="#">Dashboard</a>
+<a class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 px-1 pt-1 text-sm font-medium" href="#">My Applications</a>
+<a class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 px-1 pt-1 text-sm font-medium" href="#">Saved Jobs</a>
+<a class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 px-1 pt-1 text-sm font-medium" href="#">Resources</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-slate-400 text-sm">search</span>
+</div>
+<input class="block w-64 pl-10 pr-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-800 text-sm focus:ring-primary focus:border-primary" placeholder="Search jobs, skills..." type="text"/>
+</div>
+<button class="p-2 text-slate-400 hover:text-slate-500 relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white dark:ring-slate-900"></span>
+</button>
+<div class="h-8 w-8 rounded-full bg-slate-200 overflow-hidden border border-slate-300">
+<img alt="Profile" class="h-full w-full object-cover" data-alt="Professional headshot of a user" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCufR28vmRtEYc4pDSOyOpnlHxgViFq18lm7GcqUgNrfLMR4haSLxPkr0D2Xgj3kHxu4b0-yWXXKm46_RX1Q2C50Gw22RTBPWSc4nHyKWvQOnwbxudoXaPK_9P5v-4ely7rSRmsYEVCtxN68_M_iVHfZUxXTN4S8VPVTiJJgEoIMpCdWdQQsZ0Ro7Srm44kjZ6pNGVK_3sFFgrb_hNR_Ow9laAElWMmaz0lhqjLHUFXva3noCi-PPatvceurCZa11sfGy-7fDGDeW4"/>
+</div>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div class="flex flex-col lg:flex-row gap-8">
+<!-- Left Sidebar: Extracted Profile -->
+<aside class="w-full lg:w-1/3 space-y-6">
+<div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
+<div class="p-6">
+<div class="flex justify-between items-start mb-6">
+<div>
+<h2 class="text-lg font-bold text-slate-900 dark:text-white">Resume Insights</h2>
+<p class="text-xs text-slate-500 dark:text-slate-400">Last updated 2 days ago</p>
+</div>
+<button class="text-primary hover:bg-primary/10 p-2 rounded-lg transition-colors">
+<span class="material-symbols-outlined">edit</span>
+</button>
+</div>
+<!-- Core Skills -->
+<div class="mb-8">
+<h3 class="text-sm font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-lg">psychology</span>
+                                Core Skills
+                            </h3>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 bg-primary/10 text-primary text-xs font-medium rounded-full">JavaScript (ES6+)</span>
+<span class="px-3 py-1 bg-primary/10 text-primary text-xs font-medium rounded-full">React &amp; Next.js</span>
+<span class="px-3 py-1 bg-primary/10 text-primary text-xs font-medium rounded-full">Tailwind CSS</span>
+<span class="px-3 py-1 bg-primary/10 text-primary text-xs font-medium rounded-full">TypeScript</span>
+<span class="px-3 py-1 bg-primary/10 text-primary text-xs font-medium rounded-full">UI/UX Design</span>
+<span class="px-3 py-1 bg-primary/10 text-primary text-xs font-medium rounded-full">Node.js</span>
+<span class="px-3 py-1 bg-primary/10 text-primary text-xs font-medium rounded-full">Project Management</span>
+</div>
+</div>
+<!-- Experience -->
+<div class="mb-8">
+<h3 class="text-sm font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-lg">work</span>
+                                Experience
+                            </h3>
+<div class="space-y-4">
+<div class="relative pl-6 border-l-2 border-slate-100 dark:border-slate-800">
+<div class="absolute -left-[9px] top-0 h-4 w-4 rounded-full bg-primary border-4 border-white dark:border-slate-900"></div>
+<h4 class="text-sm font-bold text-slate-900 dark:text-white">Senior Frontend Developer</h4>
+<p class="text-xs text-slate-600 dark:text-slate-400">TechCorp Inc. • 2021 - Present</p>
+<p class="text-xs mt-1 text-slate-500">Leading the UI modernization project across 3 core platforms.</p>
+</div>
+<div class="relative pl-6 border-l-2 border-slate-100 dark:border-slate-800">
+<div class="absolute -left-[9px] top-0 h-4 w-4 rounded-full bg-slate-300 dark:bg-slate-700 border-4 border-white dark:border-slate-900"></div>
+<h4 class="text-sm font-bold text-slate-900 dark:text-white">UI Designer &amp; Developer</h4>
+<p class="text-xs text-slate-600 dark:text-slate-400">Creative Solstice • 2018 - 2021</p>
+<p class="text-xs mt-1 text-slate-500">Designed and implemented mobile-first responsive dashboards.</p>
+</div>
+</div>
+</div>
+<!-- Education -->
+<div>
+<h3 class="text-sm font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-lg">school</span>
+                                Education
+                            </h3>
+<div class="space-y-4">
+<div class="flex gap-3">
+<div class="h-10 w-10 shrink-0 bg-slate-100 dark:bg-slate-800 rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-400">account_balance</span>
+</div>
+<div>
+<h4 class="text-sm font-bold text-slate-900 dark:text-white">M.S. in Software Engineering</h4>
+<p class="text-xs text-slate-600 dark:text-slate-400">Stanford University • 2018</p>
+</div>
+</div>
+<div class="flex gap-3">
+<div class="h-10 w-10 shrink-0 bg-slate-100 dark:bg-slate-800 rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-400">account_balance</span>
+</div>
+<div>
+<h4 class="text-sm font-bold text-slate-900 dark:text-white">B.S. in Computer Science</h4>
+<p class="text-xs text-slate-600 dark:text-slate-400">University of Arts • 2016</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-slate-50 dark:bg-slate-800/50 p-4 border-t border-slate-200 dark:border-slate-800">
+<button class="w-full py-2.5 bg-primary text-white text-sm font-bold rounded-lg hover:bg-primary/90 transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm">upload_file</span>
+                            Update Resume
+                        </button>
+</div>
+</div>
+<!-- AI Tips Card -->
+<div class="bg-primary/5 dark:bg-primary/10 rounded-xl p-5 border border-primary/20">
+<h4 class="text-primary text-sm font-bold mb-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">auto_awesome</span>
+                        AI Optimization Tip
+                    </h4>
+<p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                        Adding <strong>Cloud Architecture</strong> to your skills could increase your match rate for 12 more high-paying roles in your area.
+                    </p>
+</div>
+</aside>
+<!-- Main Area: Job Recommendations -->
+<section class="flex-1 space-y-6">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
+<div>
+<h2 class="text-2xl font-bold text-slate-900 dark:text-white">Job Recommendations</h2>
+<p class="text-sm text-slate-500 dark:text-slate-400">We found 24 jobs matching your profile perfectly.</p>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-sm text-slate-500 dark:text-slate-400">Sort by:</span>
+<select class="text-sm border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg focus:ring-primary focus:border-primary">
+<option>Match Score</option>
+<option>Newest</option>
+<option>Salary Range</option>
+</select>
+</div>
+</div>
+<!-- Job Card 1 -->
+<div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 hover:border-primary/50 transition-colors">
+<div class="flex flex-col md:flex-row gap-6">
+<div class="flex-1">
+<div class="flex items-start justify-between mb-4">
+<div class="flex gap-4">
+<div class="h-12 w-12 rounded-lg bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center border border-blue-100 dark:border-blue-800">
+<span class="material-symbols-outlined text-blue-600 dark:text-blue-400">hub</span>
+</div>
+<div>
+<h3 class="text-lg font-bold text-slate-900 dark:text-white hover:text-primary cursor-pointer">Senior UI/UX Engineer</h3>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-sm font-medium text-slate-700 dark:text-slate-300">NovaStream Systems</span>
+<span class="h-1 w-1 rounded-full bg-slate-300"></span>
+<span class="text-sm text-slate-500 dark:text-slate-400">San Francisco, USA</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-sm font-bold rounded-lg border border-green-200 dark:border-green-800/50">98% Match</span>
+<a class="text-primary text-xs flex items-center gap-1 mt-2 hover:underline" href="#">
+                                        Original Source
+                                        <span class="material-symbols-outlined text-xs">open_in_new</span>
+</a>
+</div>
+</div>
+<p class="text-sm text-slate-600 dark:text-slate-400 line-clamp-2 mb-4 leading-relaxed">
+                                We're looking for a visionary Senior Engineer to lead the design system and frontend architecture of our next-gen streaming platform. You'll work closely with product and engineering teams to deliver world-class experiences.
+                            </p>
+<div class="flex flex-wrap items-center gap-y-2 gap-x-6 text-xs text-slate-500 dark:text-slate-400 mb-6">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-base">schedule</span>
+                                    Published 4 hours ago
+                                </div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-base">calendar_today</span>
+                                    Full-time • 40h/week
+                                </div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-base">payments</span>
+                                    $140k - $180k
+                                </div>
+</div>
+<div class="flex flex-wrap gap-3">
+<button class="flex-1 sm:flex-none py-2 px-6 bg-primary text-white text-sm font-bold rounded-lg hover:shadow-lg hover:shadow-primary/20 transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-lg">auto_fix_high</span>
+                                    Tailor Resume with AI
+                                </button>
+<button class="flex-1 sm:flex-none py-2 px-6 bg-primary/10 text-primary text-sm font-bold rounded-lg hover:bg-primary/20 transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-lg">forum</span>
+                                    Interview Prep with AI
+                                </button>
+<button class="p-2 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800">
+<span class="material-symbols-outlined text-slate-400">bookmark</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Job Card 2 -->
+<div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 hover:border-primary/50 transition-colors">
+<div class="flex flex-col md:flex-row gap-6">
+<div class="flex-1">
+<div class="flex items-start justify-between mb-4">
+<div class="flex gap-4">
+<div class="h-12 w-12 rounded-lg bg-orange-50 dark:bg-orange-900/30 flex items-center justify-center border border-orange-100 dark:border-orange-800">
+<span class="material-symbols-outlined text-orange-600 dark:text-orange-400">payments</span>
+</div>
+<div>
+<h3 class="text-lg font-bold text-slate-900 dark:text-white hover:text-primary cursor-pointer">Lead Frontend Architect</h3>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-sm font-medium text-slate-700 dark:text-slate-300">FintechGlobal Ltd.</span>
+<span class="h-1 w-1 rounded-full bg-slate-300"></span>
+<span class="text-sm text-slate-500 dark:text-slate-400">London, UK (Remote)</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-sm font-bold rounded-lg border border-green-200 dark:border-green-800/50">92% Match</span>
+<a class="text-primary text-xs flex items-center gap-1 mt-2 hover:underline" href="#">
+                                        Original Source
+                                        <span class="material-symbols-outlined text-xs">open_in_new</span>
+</a>
+</div>
+</div>
+<p class="text-sm text-slate-600 dark:text-slate-400 line-clamp-2 mb-4 leading-relaxed">
+                                Join our core banking modernization team. You'll lead the migration from legacy frameworks to a modern React architecture focusing on security, performance, and accessibility.
+                            </p>
+<div class="flex flex-wrap items-center gap-y-2 gap-x-6 text-xs text-slate-500 dark:text-slate-400 mb-6">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-base">schedule</span>
+                                    Published 1 day ago
+                                </div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-base">calendar_today</span>
+                                    Contract • 12 Months
+                                </div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-base">payments</span>
+                                    £650 - £800 / day
+                                </div>
+</div>
+<div class="flex flex-wrap gap-3">
+<button class="flex-1 sm:flex-none py-2 px-6 bg-primary text-white text-sm font-bold rounded-lg hover:shadow-lg hover:shadow-primary/20 transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-lg">auto_fix_high</span>
+                                    Tailor Resume with AI
+                                </button>
+<button class="flex-1 sm:flex-none py-2 px-6 bg-primary/10 text-primary text-sm font-bold rounded-lg hover:bg-primary/20 transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-lg">forum</span>
+                                    Interview Prep with AI
+                                </button>
+<button class="p-2 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800">
+<span class="material-symbols-outlined text-slate-400">bookmark</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Job Card 3 -->
+<div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 hover:border-primary/50 transition-colors">
+<div class="flex flex-col md:flex-row gap-6">
+<div class="flex-1">
+<div class="flex items-start justify-between mb-4">
+<div class="flex gap-4">
+<div class="h-12 w-12 rounded-lg bg-purple-50 dark:bg-purple-900/30 flex items-center justify-center border border-purple-100 dark:border-purple-800">
+<span class="material-symbols-outlined text-purple-600 dark:text-purple-400">palette</span>
+</div>
+<div>
+<h3 class="text-lg font-bold text-slate-900 dark:text-white hover:text-primary cursor-pointer">Product Designer (Design Systems)</h3>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-sm font-medium text-slate-700 dark:text-slate-300">Stellar Labs</span>
+<span class="h-1 w-1 rounded-full bg-slate-300"></span>
+<span class="text-sm text-slate-500 dark:text-slate-400">Berlin, Germany</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="px-3 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-600 text-sm font-bold rounded-lg border border-yellow-200 dark:border-yellow-800/50">85% Match</span>
+<a class="text-primary text-xs flex items-center gap-1 mt-2 hover:underline" href="#">
+                                        Original Source
+                                        <span class="material-symbols-outlined text-xs">open_in_new</span>
+</a>
+</div>
+</div>
+<p class="text-sm text-slate-600 dark:text-slate-400 line-clamp-2 mb-4 leading-relaxed">
+                                We're seeking a designer who loves engineering. You'll be responsible for building out our design token system and component library across Web, iOS, and Android platforms.
+                            </p>
+<div class="flex flex-wrap items-center gap-y-2 gap-x-6 text-xs text-slate-500 dark:text-slate-400 mb-6">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-base">schedule</span>
+                                    Published 2 days ago
+                                </div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-base">calendar_today</span>
+                                    Full-time
+                                </div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-base">location_on</span>
+                                    Relocation Assistance
+                                </div>
+</div>
+<div class="flex flex-wrap gap-3">
+<button class="flex-1 sm:flex-none py-2 px-6 bg-primary text-white text-sm font-bold rounded-lg hover:shadow-lg hover:shadow-primary/20 transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-lg">auto_fix_high</span>
+                                    Tailor Resume with AI
+                                </button>
+<button class="flex-1 sm:flex-none py-2 px-6 bg-primary/10 text-primary text-sm font-bold rounded-lg hover:bg-primary/20 transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-lg">forum</span>
+                                    Interview Prep with AI
+                                </button>
+<button class="p-2 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800">
+<span class="material-symbols-outlined text-slate-400">bookmark</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<div class="pt-4 flex justify-center">
+<button class="px-8 py-3 border-2 border-slate-200 dark:border-slate-800 rounded-xl text-slate-600 dark:text-slate-400 font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                        Load More Recommendations
+                    </button>
+</div>
+</section>
+</div>
+</main>
+<footer class="mt-12 py-12 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
+<div class="flex items-center gap-2">
+<div class="bg-primary/20 text-primary p-1.5 rounded flex items-center justify-center">
+<span class="material-symbols-outlined !text-xl">rocket_launch</span>
+</div>
+<span class="text-sm font-bold text-slate-900 dark:text-white tracking-tight">JobAI Connect</span>
+</div>
+<div class="flex gap-8 text-sm text-slate-500 dark:text-slate-400">
+<a class="hover:text-primary" href="#">Terms of Service</a>
+<a class="hover:text-primary" href="#">Privacy Policy</a>
+<a class="hover:text-primary" href="#">Help Center</a>
+<a class="hover:text-primary" href="#">Careers</a>
+</div>
+<p class="text-xs text-slate-400">© 2024 JobAI Connect. Powered by advanced matching algorithms.</p>
+</div>
+</footer>
+</body></html>
