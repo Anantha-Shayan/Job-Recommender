@@ -38,8 +38,8 @@ def pdf_resume(file):
     result_text = ""
     images = []
     word_bboxes = []
-    heights = []
-    headings = []
+    #heights = []
+    headings = {}
 
     # Render images using PyMuPDF
     doc = fitz.open(stream=file_bytes, filetype="pdf")
@@ -60,15 +60,22 @@ def pdf_resume(file):
             for page_num, page in enumerate(pdf.pages):
                 page_text = page.extract_text() or ""
                 result_text += page_text
-                page_words = page.extract_words()
-                for x in range (len(page_words)):
-                    heights.append(page_words[x]['height'])
-                heights.sort()
-                top2 = heights[-3:-1]
-                for _ in page_words:
-                    if _['height'] in top2:
-                        headings.append(_['text'])
+                page_words = page.extract_words(extra_attrs=['y0'])
+                # for x in range (len(page_words)):
+                #     heights.append(page_words[x]['height'])
+                # heights.sort()
+                # top2 = heights[-3:-1]
+                # for _ in page_words:
+                #     if _['height'] in top2:
+                #         headings.append(_['text'])
+                for word in page_words:
+                    if word["text"].lower() in [
+                        "skills", "experience",
+                        "education", "projects", "languages"
+                    ]:
+                        headings[word["text"]] = word['y0']
                 
+
                     
                 # Collect character bboxes
                 for word in page_words:
