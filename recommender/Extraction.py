@@ -5,7 +5,7 @@ from PIL import ImageDraw
 import pandas as pd
 #import pytesseract
 #import easyocr # more accurate
-import docx2pdf
+import docx2pdf # requires MSWord(Windows) to be imstalled
 #import pdf2image #requires poppler installation
 import fitz #PyMuPdf
 import tempfile
@@ -38,6 +38,8 @@ def pdf_resume(file):
     result_text = ""
     images = []
     word_bboxes = []
+    heights = []
+    headings = []
 
     # Render images using PyMuPDF
     doc = fitz.open(stream=file_bytes, filetype="pdf")
@@ -58,19 +60,29 @@ def pdf_resume(file):
             for page_num, page in enumerate(pdf.pages):
                 page_text = page.extract_text() or ""
                 result_text += page_text
+                page_words = page.extract_words()
+                for x in range (len(page_words)):
+                    heights.append(page_words[x]['height'])
+                heights.sort()
+                top2 = heights[-3:-1]
+                for _ in page_words:
+                    if _['height'] in top2:
+                        headings.append(_['text'])
                 
+                    
                 # Collect character bboxes
-                for word in page.extract_words():
+                for word in page_words:
                     word_bboxes.append({
-                        "char": word["text"],
+                        "text": word["text"],
                         "bbox": (word["x0"], word["top"], word["x1"], word["bottom"]),
-                        "page": page_num
+                        "page": page_num,
+                        "heading": "Yes" if word["text"] in headings else "No"
                     })
     
     if len(result_text.strip()) < 30:
             return ["PDF parsing failed. Please try with .docx", [],[]] #pdf is scanned and we don't have OCR 
                             
-    return [result_text, images, word_bboxes]
+    return [result_text, headings, images, word_bboxes]
 
 #OCR quality is very low. Hence this is a trade-off
 # # image to text
@@ -114,9 +126,9 @@ def docx_resume(file):
 
         # open the PDF and pass the file object to pdf_resume exactly once
         with open(pdf_path, "rb") as pdf_file:
-            text, images, word_bboxes = pdf_resume(pdf_file)
+            text, headings, images, word_bboxes = pdf_resume(pdf_file)
 
-    return [text, images, word_bboxes]
+    return [text, headings, images, word_bboxes]
 
 
 #f = io.open('D:\\python\\job_rec\\recommender\\Screenshot (337).png',encoding='utf8')
@@ -152,14 +164,16 @@ if uploaded_file is not None:
     file_type = uploaded_file.name.split(".")[-1].lower()
     with st.spinner("🔍 Extracting text..."):
         if file_type == "pdf":
-            text,image,word_bboxes = pdf_resume(uploaded_file)
+            text,headings,image,word_bboxes = pdf_resume(uploaded_file)
         elif file_type == "docx":
-            text,image, word_bboxes = docx_resume(uploaded_file)
+            text,headings,image, word_bboxes = docx_resume(uploaded_file)
         else:
             text = "Unsupported file type!"
+            headings = 'No Headings'
             image = "Invalid"
             word_bboxes = 'NULL'
     st.session_state.document_text = text
+    st.session_state.document_headings = headings
     st.session_state.document_image = image
     st.session_state.bboxes = word_bboxes
     uploaded_file.seek(0)
@@ -174,6 +188,8 @@ if st.session_state.document_text:
     # 1. Extracted Text Expander
     with st.expander("📜 Extracted Document Text"):
         st.text_area("Text Output", st.session_state.document_text, height=200)
+        with st.expander("📜 Extracted Document Headings"):
+            st.text_area("Text Output", st.session_state.document_headings, height=100)
     
     # 2. Bounding Box Data Expander
     if st.session_state.bboxes and st.session_state.bboxes != 'NULL':
