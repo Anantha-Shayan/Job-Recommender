@@ -61,6 +61,7 @@ def pdf_resume(file):
                 page_text = page.extract_text() or ""
                 result_text += page_text
                 page_words = page.extract_words(extra_attrs=['y0'])
+            # word comparision is better than height based logic
                 # for x in range (len(page_words)):
                 #     heights.append(page_words[x]['height'])
                 # heights.sort()
@@ -68,14 +69,58 @@ def pdf_resume(file):
                 # for _ in page_words:
                 #     if _['height'] in top2:
                 #         headings.append(_['text'])
+            # word comparision for headings
                 for word in page_words:
                     if word["text"].lower() in [
-                        "skills", "experience",
-                        "education", "projects", "languages"
+                        "skills", "experience","hobbies"
+                        "education", "projects", "languages",
+                        "achievements","interests", "referrals",
+                        "references"
                     ]:
-                        headings[word["text"]] = word['y0']
+                        headings[word["text"].lower()] = word['top']
                 
+            # extract text under headings
+            # Normalize heading keys to lowercase
+                normalized_headings = {
+                    key.lower(): value for key, value in headings.items()
+                }
 
+                # Sort headings by vertical position
+                sorted_headings = sorted(
+                    normalized_headings.items(),
+                    key=lambda x: x[1]  # sort by y position
+                )
+
+                headings_area = {}
+
+                for i in range(len(sorted_headings)):
+                    section_name = sorted_headings[i][0]
+                    current_y = sorted_headings[i][1]
+
+                    # Determine bottom boundary
+                    if i < len(sorted_headings) - 1:
+                        next_y = sorted_headings[i + 1][1]
+                    else:
+                        next_y = float("inf")
+
+                    headings_area[section_name] = []
+
+                    for word in page_words:
+                        if word['y0'] > current_y and word['y0'] < next_y:
+                            headings_area[section_name].append(word['text'])
+                    # headings_area = {}
+                    # y_values = list(values for values in headings.values())
+                    # for _ in range(len(y_values) - 1):
+                    #     for key, value in headings.items():
+                    #         if value==y_values[_]:
+                    #             headings_area[key] = []
+                    #             for word in page_words:
+                    #                 if word['y0']>y_values[_] and word['y0']<y_values[(_+1)]:
+                    #                     headings_area[key].append(word['text'])
+                        # headings_area[key] = []
+                        # for j in page_words:
+                        #     if j['y0'] < value and j['y0'] > headings[key+1]:
+                        #         headings_area[y].append(j)
                     
                 # Collect character bboxes
                 for word in page_words:
@@ -89,7 +134,7 @@ def pdf_resume(file):
     if len(result_text.strip()) < 30:
             return ["PDF parsing failed. Please try with .docx", [],[]] #pdf is scanned and we don't have OCR 
                             
-    return [result_text, headings, images, word_bboxes]
+    return [result_text, headings, headings_area, images, word_bboxes]
 
 #OCR quality is very low. Hence this is a trade-off
 # # image to text
@@ -135,7 +180,7 @@ def docx_resume(file):
         with open(pdf_path, "rb") as pdf_file:
             text, headings, images, word_bboxes = pdf_resume(pdf_file)
 
-    return [text, headings, images, word_bboxes]
+    return [text, headings, headings_area, images, word_bboxes]
 
 
 #f = io.open('D:\\python\\job_rec\\recommender\\Screenshot (337).png',encoding='utf8')
@@ -171,9 +216,9 @@ if uploaded_file is not None:
     file_type = uploaded_file.name.split(".")[-1].lower()
     with st.spinner("🔍 Extracting text..."):
         if file_type == "pdf":
-            text,headings,image,word_bboxes = pdf_resume(uploaded_file)
+            text,headings,headings_area,image,word_bboxes = pdf_resume(uploaded_file)
         elif file_type == "docx":
-            text,headings,image, word_bboxes = docx_resume(uploaded_file)
+            text,headings,headings_area,image,word_bboxes = docx_resume(uploaded_file)
         else:
             text = "Unsupported file type!"
             headings = 'No Headings'
@@ -181,6 +226,7 @@ if uploaded_file is not None:
             word_bboxes = 'NULL'
     st.session_state.document_text = text
     st.session_state.document_headings = headings
+    st.session_state.document_headings_area = headings_area
     st.session_state.document_image = image
     st.session_state.bboxes = word_bboxes
     uploaded_file.seek(0)
@@ -197,6 +243,8 @@ if st.session_state.document_text:
         st.text_area("Text Output", st.session_state.document_text, height=200)
         with st.expander("📜 Extracted Document Headings"):
             st.text_area("Text Output", st.session_state.document_headings, height=100)
+        with st.expander("📜 Extracted Document Headings Area"):
+            st.text_area("Text Output", st.session_state.document_headings_area, height=100)
     
     # 2. Bounding Box Data Expander
     if st.session_state.bboxes and st.session_state.bboxes != 'NULL':
