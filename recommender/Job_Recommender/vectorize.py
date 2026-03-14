@@ -2,6 +2,7 @@ from sentence_transformers import SentenceTransformer
 import faiss
 import numpy as np
 import pickle
+import re
 
 model = SentenceTransformer("all-MiniLM-L6-v2")
 
@@ -9,23 +10,28 @@ model = SentenceTransformer("all-MiniLM-L6-v2")
 dummy_jobs = [
     {
         "title": "Machine Learning Engineer",
-        "description": "Python NLP FastAPI Docker TensorFlow LangChain FAISS"
+        "skills": ["Python", "NLP", "FastAPI", "Docker", "TensorFlow", "LangChain", "FAISS"],
+        "min_experience" : 0
     },
     {
         "title": "Backend Developer",
-        "description": "Node.js Express MongoDB REST APIs Docker Redis"
+        "skills": ["Node.js", "Express", "MongoDB", "REST APIs", "Docker", "Redis"],
+        "min_experience" : 0
     },
     {
         "title": "Data Scientist",
-        "description": "Python Pandas Scikit-learn Machine Learning Statistics SQL"
+        "skills": ["Python", "Pandas", "Scikit-learn", "Machine Learning", "Statistics", "SQL"],
+        "min_experience" : 0
     },
     {
         "title": "Cloud Engineer",
-        "description": "AWS Docker Kubernetes CI/CD Linux Terraform"
+        "skills": ["AWS", "Docker", "Kubernetes", "CI/CD", "Linux", "Terraform"],
+        "min_experience" : 0
     },
     {
         "title": "AI Engineer",
-        "description": "Transformers HuggingFace RAG LangChain Python NLP"
+        "skills": ["Transformers", "HuggingFace", "RAG", "LangChain", "Python", "NLP"],
+        "min_experience" : 0
     }
 ]
 
@@ -34,7 +40,7 @@ dummy_jobs = [
 def build_job_vector_store():
 
     job_texts = [
-        job["title"] + " " + job["description"]
+        job["title"] + " Skills: " + " ".join(job["skills"])
         for job in dummy_jobs
     ]
 
@@ -42,7 +48,9 @@ def build_job_vector_store():
 
     dimension = embeddings.shape[1]
 
-    index = faiss.IndexFlatL2(dimension)
+    # index = faiss.IndexFlatL2(dimension) # Eulidean dist
+    faiss.normalize_L2(embeddings)
+    index = faiss.IndexFlatIP(dimension) #dot product 
     index.add(np.array(embeddings))
 
     # Save index
@@ -54,14 +62,21 @@ def build_job_vector_store():
 
     print("Jobs stored in FAISS successfully.")
 
+# Extract years of experience from reusme
+def extract_years_of_experience(text):
+
+    match = re.search(r'(\d+)\+?\s*years?', text.lower())
+
+    if match:
+        return int(match.group(1))
+
+    return 0
 
 # Convert Resume Sections to Query Vector
 def embed_resume_query(sections):
 
     combined_text = (
-        "Skills: " + " ".join(sections.get("skills", [])) + "\n" +
-        "Projects: " + " ".join(sections.get("projects", [])) + "\n" +
-        "Experience: " + " ".join(sections.get("experience", []))
+        "Skills: " + " ".join(sections.get("skills", []))
     )
 
     embedding = model.encode([combined_text])
@@ -70,20 +85,32 @@ def embed_resume_query(sections):
 
 
 # Search Matching Jobs
-def search_jobs(sections, top_k=3):
+def search_jobs(sections, resume_text, top_k=3):
 
     index = faiss.read_index("jobs_faiss.index")
 
     with open("jobs_metadata.pkl", "rb") as f:
         jobs = pickle.load(f)
 
+    resume_exp = extract_years_of_experience(resume_text)
+    
     query_embedding = embed_resume_query(sections)
+    faiss.normalize_L2(query_embedding)
 
     distances, indices = index.search(np.array(query_embedding), top_k)
 
     results = []
 
-    for idx in indices[0]:
-        results.append(jobs[idx])
+    for score, idx in zip(distances[0],indices[0]):
+        job = jobs[idx]
+
+        # experience filtering
+        if resume_exp >= job["min_experience"]:
+           results.append({
+                "title": job["title"],
+                "skills": job["skills"],
+                "required_experience": job["min_experience"],
+                "similarity_score": float(score)
+                })
 
     return results

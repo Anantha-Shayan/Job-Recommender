@@ -14,7 +14,7 @@ import io
 # import requests
 # from fastapi import FastAPI, HTTPException
 import streamlit as st
-from Layout_detection_and_Semantic_segmentation import process_document_for_layout_and_semantic
+# from Layout_detection_and_Semantic_segmentation import process_document_for_layout_and_semantic
 import pythoncom
 
 
@@ -130,62 +130,62 @@ def docx_resume(file):
 
 # ==========================================
 # STREAMLIT UI
-# ==========================================
+# # ==========================================
 
-st.set_page_config(page_title="Resume Parsing", page_icon="🤖", layout="wide")
-st.title("📄 Resume Parsing")
+# st.set_page_config(page_title="Resume Parsing", page_icon="🤖", layout="wide")
+# st.title("📄 Resume Parsing")
 
-st.sidebar.header("Upload Document")
-uploaded_file = st.sidebar.file_uploader(
-    "Upload a PDF or DOCX file",
-    type=["pdf", "docx"]
-)
+# st.sidebar.header("Upload Document")
+# uploaded_file = st.sidebar.file_uploader(
+#     "Upload a PDF or DOCX file",
+#     type=["pdf", "docx"]
+# )
 
-if uploaded_file is not None:
-    file_type = uploaded_file.name.split(".")[-1].lower()
+# if uploaded_file is not None:
+#     file_type = uploaded_file.name.split(".")[-1].lower()
 
-    with st.spinner("🔍 Extracting text..."):
-        if file_type == "pdf":
-            text, headings, headings_area, image, word_bboxes = pdf_resume(uploaded_file)
-        elif file_type == "docx":
-            text, headings, headings_area, image, word_bboxes = docx_resume(uploaded_file)
-        else:
-            st.error("Unsupported file type")
-            st.stop()
+#     with st.spinner("🔍 Extracting text..."):
+#         if file_type == "pdf":
+#             text, headings, headings_area, image, word_bboxes = pdf_resume(uploaded_file)
+#         elif file_type == "docx":
+#             text, headings, headings_area, image, word_bboxes = docx_resume(uploaded_file)
+#         else:
+#             st.error("Unsupported file type")
+#             st.stop()
 
-    st.session_state.document_text = text
-    st.session_state.document_headings = headings
-    st.session_state.document_headings_area = headings_area
-    st.session_state.document_image = image
-    st.session_state.bboxes = word_bboxes
+#     st.session_state.document_text = text
+#     st.session_state.document_headings = headings
+#     st.session_state.document_headings_area = headings_area
+#     st.session_state.document_image = image
+#     st.session_state.bboxes = word_bboxes
 
-    uploaded_file.seek(0)
-    doc_results = process_document_for_layout_and_semantic(
-        file_bytes=uploaded_file.read(),
-        image_bytes_list=image
-    )
-
-
-# ==========================================
-# DISPLAY RESULTS
-# ==========================================
-
-if "document_text" in st.session_state:
-
-    with st.expander("📜 Extracted Document Text"):
-        st.text_area("Text Output", st.session_state.document_text, height=200)
-
-        with st.expander("📂 Parsed Sections"):
-            st.json(st.session_state.document_headings_area)
+#     uploaded_file.seek(0)
+#     doc_results = process_document_for_layout_and_semantic(
+#         file_bytes=uploaded_file.read(),
+#         image_bytes_list=image
+#     )
 
 
-# ==========================================
-# CHAT PLACEHOLDER
-# ==========================================
+# # ==========================================
+# # DISPLAY RESULTS
+# # ==========================================
 
-st.subheader("💬 Chat with Document")
+# if "document_text" in st.session_state:
 
-user_input = st.text_input("Ask something about the document...")
+#     with st.expander("📜 Extracted Document Text"):
+#         st.text_area("Text Output", st.session_state.document_text, height=200)
 
-if st.button("Send") and user_input.strip():
-    st.write("🤖 Bot: Resume chat coming soon!")
+#         with st.expander("📂 Parsed Sections"):
+#             st.json(st.session_state.document_headings_area)
+
+
+# # ==========================================
+# # CHAT PLACEHOLDER
+# # ==========================================
+
+# st.subheader("💬 Chat with Document")
+
+# user_input = st.text_input("Ask something about the document...")
+
+# if st.button("Send") and user_input.strip():
+#     st.write("🤖 Bot: Resume chat coming soon!")

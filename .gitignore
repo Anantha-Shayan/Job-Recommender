@@ -11,3 +11,9 @@ JRenv/
 
 # env files
 .env
+
+# resume files for testing
+recommender/RESUME.pdf
+recommender/abc.pdf
+resume_sample.pdf
+sshu_res.pdf
