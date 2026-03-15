@@ -105,7 +105,7 @@ def search_jobs(sections, resume_text, top_k=3):
         job = jobs[idx]
 
         # experience filtering
-        if resume_exp >= job["min_experience"]:
+        if resume_exp >= job["min_experience"] and score > 0.55:
            results.append({
                 "title": job["title"],
                 "skills": job["skills"],

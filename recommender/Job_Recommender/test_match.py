@@ -5,7 +5,7 @@ from vectorize import build_job_vector_store, search_jobs
 build_job_vector_store()
 
 # Step 2: Parse resume
-with open(r"D:\\python\\job_rec\\sshu_res.pdf", "rb") as f:
+with open(r"D:\\python\\job_rec\\recommender\\RESUME.pdf", "rb") as f:
     text, headings, sections, images, bboxes = pdf_resume(f)
 
 # Step 3: Search jobs
