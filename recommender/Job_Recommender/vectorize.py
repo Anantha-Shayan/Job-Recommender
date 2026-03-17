@@ -10,7 +10,7 @@ model = SentenceTransformer("all-MiniLM-L6-v2")
 dummy_jobs = [
     {
         "title": "Machine Learning Engineer",
-        "skills": ["Python", "NLP", "FastAPI", "Docker", "TensorFlow", "LangChain", "FAISS"],
+        "skills": ["Python", "NLP", "FastAPI", "Docker", "TensorFlow", "LangChain", "FAISS", "MongoDB", "SQL"],
         "min_experience" : 0
     },
     {
@@ -105,10 +105,19 @@ def search_jobs(sections, resume_text, top_k=3):
         job = jobs[idx]
 
         # experience filtering
-        if resume_exp >= job["min_experience"] and score > 0.55:
+        threshold = 0.33
+        res_skills = []
+        for line in sections.get("skills", []):
+            parts = line.replace(",", " ").split()
+            for part in parts:
+                res_skills.append(part.strip().lower())
+
+        if resume_exp >= job["min_experience"] and score > threshold:    
+        # score > threshold because here if score is high, relevance is high. Unlike in Euclidean distance where distance would replace score and condition would be dist < threshold
            results.append({
                 "title": job["title"],
                 "skills": job["skills"],
+                "missing_skills": list(set(skill.lower() for skill in job["skills"]) - set(res_skills)),
                 "required_experience": job["min_experience"],
                 "similarity_score": float(score)
                 })

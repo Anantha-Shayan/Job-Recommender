@@ -1,3 +1,4 @@
-x = {"title": "Job", "Desc" : "Hi this Is Anantha"}
-xt = x['title'] + " : " + str(x['Desc'].split())
-print(xt)
+x = {'Greet':["Hi", 'Bye']}
+y = {'Greet':["Hi"]}
+
+print(list(set(x.get('Greet')) - set(y['Greet'])))
