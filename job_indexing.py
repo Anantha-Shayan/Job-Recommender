@@ -1,0 +1,2 @@
+from vectorize import build_job_vector_store
+build_job_vector_store()

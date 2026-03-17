@@ -2,42 +2,16 @@ from sentence_transformers import SentenceTransformer
 import faiss
 import numpy as np
 import pickle
+import json
 import re
 
 model = SentenceTransformer("all-MiniLM-L6-v2")
 
-# Dummy Job Dataset
-dummy_jobs = [
-    {
-        "title": "Machine Learning Engineer",
-        "skills": ["Python", "NLP", "FastAPI", "Docker", "TensorFlow", "LangChain", "FAISS", "MongoDB", "SQL"],
-        "min_experience" : 0
-    },
-    {
-        "title": "Backend Developer",
-        "skills": ["Node.js", "Express", "MongoDB", "REST APIs", "Docker", "Redis"],
-        "min_experience" : 0
-    },
-    {
-        "title": "Data Scientist",
-        "skills": ["Python", "Pandas", "Scikit-learn", "Machine Learning", "Statistics", "SQL"],
-        "min_experience" : 0
-    },
-    {
-        "title": "Cloud Engineer",
-        "skills": ["AWS", "Docker", "Kubernetes", "CI/CD", "Linux", "Terraform"],
-        "min_experience" : 0
-    },
-    {
-        "title": "AI Engineer",
-        "skills": ["Transformers", "HuggingFace", "RAG", "LangChain", "Python", "NLP"],
-        "min_experience" : 0
-    }
-]
-
-
 # Store Jobs in FAISS
 def build_job_vector_store():
+
+    with open("jobs.json", "r", encoding="utf-8") as f:
+        dummy_jobs = json.load(f)
 
     job_texts = [
         job["title"] + " Skills: " + " ".join(job["skills"])
@@ -60,7 +34,7 @@ def build_job_vector_store():
     with open("jobs_metadata.pkl", "wb") as f:
         pickle.dump(dummy_jobs, f)
 
-    print("Jobs stored in FAISS successfully.")
+    print(f"{len(dummy_jobs)} jobs stored in FAISS successfully.")
 
 # Extract years of experience from reusme
 def extract_years_of_experience(text):
@@ -104,20 +78,46 @@ def search_jobs(sections, resume_text, top_k=3):
     for score, idx in zip(distances[0],indices[0]):
         job = jobs[idx]
 
-        # experience filtering
         threshold = 0.33
-        res_skills = []
+        res_skills = [] # clean resume skills
         for line in sections.get("skills", []):
-            parts = line.replace(",", " ").split()
+            parts = re.split(r'[,\|;/]', line)
             for part in parts:
                 res_skills.append(part.strip().lower())
+
+        
+        mis_skills = list(set(skill.lower() for skill in job["skills"]) - set(res_skills)) #word matching
+
+        res_skill_embed = model.encode(res_skills)
+        mis_skills_embed = model.encode(mis_skills)
+        faiss.normalize_L2(res_skill_embed)
+        faiss.normalize_L2(mis_skills_embed)
+
+
+        final_missing = []
+
+        for skill, skill_emb in zip(mis_skills, mis_skills_embed):
+
+            similarities = np.dot(res_skill_embed, mis_skills_embed.T)
+
+            if np.max(similarities) < 0.82:
+                final_missing.append(skill)
+        
+        #scoring
+            
+
+
 
         if resume_exp >= job["min_experience"] and score > threshold:    
         # score > threshold because here if score is high, relevance is high. Unlike in Euclidean distance where distance would replace score and condition would be dist < threshold
            results.append({
                 "title": job["title"],
+                "company": job.get("company"),
+                "location": job.get("location"),
+                "description": job.get("description"),
+                "url": job.get("url"),
                 "skills": job["skills"],
-                "missing_skills": list(set(skill.lower() for skill in job["skills"]) - set(res_skills)),
+                "missing_skills": final_missing,
                 "required_experience": job["min_experience"],
                 "similarity_score": float(score)
                 })

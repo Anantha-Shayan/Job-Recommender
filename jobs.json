@@ -1,0 +1,180 @@
+[
+  {
+    "title": "Associate Machine Learning Engineer Internship",
+    "company": "Pragyashal",
+    "location": "Bengaluru",
+    "experience": "Internship / Fresher",
+    "skills": [
+      "Python",
+      "Machine Learning",
+      "Deep Learning",
+      "Data Preprocessing",
+      "NumPy",
+      "Pandas",
+      "Scikit-learn",
+      "TensorFlow",
+      "Model Evaluation",
+      "Feature Engineering"
+    ],
+    "description": "6 months internship, stipend 25000/month, machine learning engineering internship role.",
+    "url": "https://www.naukri.com/job-listings-associate-machine-learning-engineer-internship-pragyashal-bengaluru-0-to-1-years-010925502315"
+  },
+  {
+    "title": "Data Scientist",
+    "company": "Topia Life Sciences",
+    "location": "Ahmedabad",
+    "experience": "0-1 Yrs",
+    "skills": [
+      "NLP",
+      "Data Science",
+      "TensorFlow",
+      "PyTorch",
+      "Artificial Intelligence",
+      "Computer Vision",
+      "Machine Learning",
+      "Deep Learning",
+      "Python",
+      "Scikit-learn",
+      "Model Deployment",
+      "API Development"
+    ],
+    "description": "Collaborate with software engineers to productionize models using APIs, batch jobs and real-time pipelines.",
+    "url": "https://www.naukri.com/job-listings-data-scientist-topia-life-sciences-ahmedabad-0-to-1-years-100326030038"
+  },
+  {
+    "title": "AI Engineer (Entry Level)",
+    "company": "Probus Insurance Broker",
+    "location": "Mumbai",
+    "experience": "0-3 Yrs",
+    "skills": [
+      "Artificial Intelligence",
+      "Large Language Models",
+      "Pandas",
+      "Python",
+      "TensorFlow",
+      "Natural Language Processing",
+      "Prompt Engineering",
+      "Machine Learning",
+      "Transformers",
+      "LangChain"
+    ],
+    "description": "Entry-level AI engineer role for freshers with academic projects or internships.",
+    "url": "https://www.naukri.com/job-listings-urgent-hiring-ai-engineer-entry-level-probus-insurance-broker-mumbai-0-to-3-years-230226007351"
+  },
+  {
+    "title": "Artificial Intelligence Engineer (Fresher)",
+    "company": "STL Digital",
+    "location": "Bengaluru",
+    "experience": "0-1 Yrs",
+    "skills": [
+      "Natural Language Processing",
+      "Artificial Intelligence",
+      "Machine Learning",
+      "Deep Learning",
+      "Python",
+      "TensorFlow",
+      "PyTorch",
+      "Data Analysis",
+      "Feature Engineering",
+      "Neural Networks"
+    ],
+    "description": "Hands-on AI project experience preferred including ML and deep learning.",
+    "url": "https://www.naukri.com/job-listings-artificial-intelligence-engineer-fresher-stl-digital-bengaluru-0-to-1-years-160326005063"
+  },
+  {
+    "title": "Machine Learning Engineer",
+    "company": "The Fastest Media Company",
+    "location": "Ahmedabad",
+    "experience": "0-2 Yrs",
+    "skills": [
+      "TensorFlow",
+      "Image Processing",
+      "Natural Language Processing",
+      "Machine Learning",
+      "Python",
+      "OpenCV",
+      "Artificial Intelligence",
+      "Django",
+      "Computer Vision",
+      "Neural Networks",
+      "CNN"
+    ],
+    "description": "Develop advanced image processing systems and machine learning models.",
+    "url": "https://www.naukri.com/job-listings-machine-learning-engineer-the-fastest-media-company-ahmedabad-0-to-2-years-151223908875"
+  },
+  {
+    "title": "Software Developer (Python Fresher)",
+    "company": "Techmirus Innovations",
+    "location": "Hyderabad",
+    "experience": "0-1 Yrs",
+    "skills": [
+      "Python",
+      "API Development",
+      "Backend Development",
+      "Machine Learning Models",
+      "AI Agent",
+      "FastAPI",
+      "Flask",
+      "SQL",
+      "Git"
+    ],
+    "description": "Python developer role involving backend systems and AI integration.",
+    "url": "https://www.naukri.com/job-listings-software-developer-fresher-python-techmirus-innovations-pvt-ltd-hyderabad-0-to-1-years-100326017611"
+  },
+  {
+    "title": "AI ML Engineer (Freshers)",
+    "company": "Blubridge",
+    "location": "Chennai",
+    "experience": "0-1 Yrs",
+    "skills": [
+      "AI",
+      "Machine Learning",
+      "Data Science",
+      "Python",
+      "TensorFlow",
+      "Java",
+      "C++",
+      "Scikit-learn",
+      "Deep Learning",
+      "Data Structures"
+    ],
+    "description": "Freshers AI/ML role requiring programming fundamentals and ML knowledge.",
+    "url": "https://www.naukri.com/job-listings-ai-ml-engineer-freshers-blubridge-chennai-0-to-1-years-031225022756"
+  },
+  {
+    "title": "AI Developer",
+    "company": "Definedge Securities Broking",
+    "location": "Pune",
+    "experience": "0-2 Yrs",
+    "skills": [
+      "Algorithms",
+      "Python",
+      "Data Analysis",
+      "Natural Language Processing",
+      "Neural Networks",
+      "Azure",
+      "Machine Learning",
+      "Deep Learning",
+      "LLM"
+    ],
+    "description": "AI/ML development with strong programming and NLP skills.",
+    "url": "https://www.naukri.com/job-listings-ai-developer-definedge-securities-broking-pune-0-to-2-years-120925502866"
+  },
+  {
+    "title": "Artificial Intelligence Engineer (Freshers)",
+    "company": "Quadrant Technologies",
+    "location": "Warangal",
+    "experience": "0 Yrs",
+    "skills": [
+      "Artificial Intelligence",
+      "Machine Learning",
+      "Python",
+      "Data Analysis",
+      "Scikit-learn",
+      "TensorFlow",
+      "Problem Solving"
+    ],
+    "description": "Fresh graduate AI role for motivated candidates.",
+    "url": "https://www.naukri.com/job-listings-artificial-intelligence-engineer-freshers-quadrant-technologies-warangal-0-to-0-years-010326002590"
+  }
+]
