@@ -176,5 +176,203 @@
     ],
     "description": "Fresh graduate AI role for motivated candidates.",
     "url": "https://www.naukri.com/job-listings-artificial-intelligence-engineer-freshers-quadrant-technologies-warangal-0-to-0-years-010326002590"
+  },
+  {
+    "title": "Web Designer & Developer",
+    "company": "Innovkraft Incorporated",
+    "location": "Bengaluru",
+    "experience": "Internship / Fresher",
+    "skills": [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "Responsive Design",
+      "Bootstrap",
+      "UI Design",
+      "UX Design",
+      "Web Development",
+      "Frontend Development",
+      "Figma"
+    ],
+    "description": "Web design and development internship involving frontend design and website creation.",
+    "url": "https://www.naukri.com/job-listings-web-designer-developer-innovkraft-incorporated-bengaluru-0-to-1-years-140524501820"
+  },
+  {
+    "title": "Agentic AI Developer Intern",
+    "company": "Capabl India",
+    "location": "Bengaluru",
+    "experience": "Internship",
+    "skills": [
+      "Python",
+      "Agentic AI",
+      "Large Language Models",
+      "LangChain",
+      "Prompt Engineering",
+      "Retrieval Augmented Generation",
+      "Vector Databases",
+      "API Integration",
+      "Machine Learning",
+      "Generative AI"
+    ],
+    "description": "Internship focused on building agentic AI systems using LLMs and orchestration frameworks.",
+    "url": "https://www.naukri.com/job-listings-agentic-ai-developer-intern-capabl-india-bengaluru-0-to-5-years-130326505674"
+  },
+  {
+    "title": "DevOps Intern",
+    "company": "UD Studios",
+    "location": "Chennai",
+    "experience": "Internship",
+    "skills": [
+      "Linux",
+      "Docker",
+      "CI/CD",
+      "GitHub Actions",
+      "AWS",
+      "Nginx",
+      "Shell Scripting",
+      "Monitoring",
+      "DevOps",
+      "Cloud Deployment"
+    ],
+    "description": "DevOps internship involving deployment automation and cloud workflows.",
+    "url": "https://www.naukri.com/job-listings-devops-intern-ud-studios-chennai-0-to-1-years-110226504662"
+  },
+  {
+    "title": "Web Developer Intern",
+    "company": "Rareminds",
+    "location": "Bengaluru",
+    "experience": "Internship",
+    "skills": [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "React",
+      "Frontend Development",
+      "Backend Basics",
+      "Git",
+      "REST APIs"
+    ],
+    "description": "3-month web development internship focused on frontend and full website development.",
+    "url": "https://www.naukri.com/job-listings-web-developer-intern-rareminds-bengaluru-0-to-1-years-130326008191"
+  },
+  {
+    "title": "Python Developer Intern",
+    "company": "Gigafactor Solutions",
+    "location": "Bengaluru",
+    "experience": "Internship",
+    "skills": [
+      "Python",
+      "Flask",
+      "FastAPI",
+      "REST API",
+      "SQL",
+      "Backend Development",
+      "Git",
+      "Data Structures"
+    ],
+    "description": "Python backend internship focused on API development and server-side programming.",
+    "url": "https://www.naukri.com/job-listings-python-developer-intern-gigafactor-solutions-bengaluru-0-to-4-years-300126501875"
+  },
+  {
+    "title": "Web Development Intern",
+    "company": "Corporate Web Solutions",
+    "location": "Bengaluru",
+    "experience": "Internship",
+    "skills": [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "Bootstrap",
+      "Frontend Development",
+      "Responsive Design",
+      "Git"
+    ],
+    "description": "Internship involving web page creation and responsive website development.",
+    "url": "https://www.naukri.com/job-listings-web-development-intern-corporate-web-solutions-bengaluru-0-to-1-years-160525501891"
+  },
+  {
+    "title": "Web Developer Intern",
+    "company": "Stellentcg",
+    "location": "Kannur, Bengaluru",
+    "experience": "Internship",
+    "skills": [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "React",
+      "Node.js",
+      "Frontend Development",
+      "Git"
+    ],
+    "description": "3-month web developer internship for fresher candidates.",
+    "url": "https://www.naukri.com/job-listings-opening-for-web-developer-interns-stellent-kannur-bengaluru-0-to-1-years-131224502426"
+  },
+  {
+    "title": "Web Developer Intern",
+    "company": "Sakthi Cadd",
+    "location": "Bengaluru",
+    "experience": "Internship",
+    "skills": [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "Frontend Development",
+      "Web Design",
+      "Responsive UI"
+    ],
+    "description": "Web development internship focused on frontend implementation.",
+    "url": "https://www.naukri.com/job-listings-web-developer-intern-sakthicadd-bengaluru-0-to-1-years-121125503975"
+  },
+  {
+    "title": "Python Developer Remote Intern",
+    "company": "Gigafactor Solutions",
+    "location": "Remote / Bengaluru",
+    "experience": "Internship",
+    "skills": [
+      "Python",
+      "Flask",
+      "FastAPI",
+      "SQL",
+      "Backend Development",
+      "REST APIs",
+      "Git"
+    ],
+    "description": "Remote Python internship involving backend development.",
+    "url": "https://www.naukri.com/job-listings-python-developer-remote-interns-gigafactor-solutions-bengaluru-0-to-1-years-300126501873"
+  },
+  {
+    "title": "Full Stack Developer Internship",
+    "company": "Webin Technovation",
+    "location": "Multiple Cities",
+    "experience": "Internship",
+    "skills": [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "React",
+      "Node.js",
+      "MongoDB",
+      "Express.js",
+      "Full Stack Development",
+      "REST API"
+    ],
+    "description": "Full stack internship covering frontend and backend technologies.",
+    "url": "https://www.naukri.com/job-listings-full-stack-developer-internship-webin-technovation-pvt-ltd-kolkata-mumbai-new-delhi-hyderabad-pune-chennai-bengaluru-0-to-1-years-161224503231"
+  },
+  {
+    "title": "Software Developer Intern",
+    "company": "Sakthi Cadd",
+    "location": "Bengaluru",
+    "experience": "Internship",
+    "skills": [
+      "Programming",
+      "Python",
+      "Java",
+      "SQL",
+      "Problem Solving",
+      "Software Development"
+    ],
+    "description": "Software development internship for fresh graduates.",
+    "url": "https://www.naukri.com/job-listings-software-developer-intern-sakthicadd-bengaluru-0-to-1-years-121125503973"
   }
 ]
