@@ -4,6 +4,7 @@ import numpy as np
 import pickle
 import json
 import re
+import time
 
 model = SentenceTransformer("all-MiniLM-L6-v2")
 
@@ -89,9 +90,16 @@ def search_jobs(sections, resume_text, top_k=3):
     query_embedding = embed_resume_query(sections)
     faiss.normalize_L2(query_embedding)
 
-    distances, indices = index.search(np.array(query_embedding), top_k)
+    times = []
 
-    results = []
+    # for _ in range(10):
+    #     start = time.perf_counter()
+    distances, indices = index.search(np.array(query_embedding), top_k)
+    #     end = time.perf_counter()
+    #     times.append((end - start) * 1000)
+
+    # avg_time = sum(times) / len(times)
+    # print(f"Average FAISS Search Time: {avg_time:.3f} ms")
 
     res_skills = [] # clean resume skills
     for line in sections.get("skills", []):
@@ -111,6 +119,7 @@ def search_jobs(sections, resume_text, top_k=3):
     res_skill_embed = model.encode(res_skills)
     faiss.normalize_L2(res_skill_embed)
 
+    results = []
     threshold = 0.33
 
     for score, idx in zip(distances[0], indices[0]):
@@ -145,7 +154,8 @@ def search_jobs(sections, resume_text, top_k=3):
         # Skill overlap score
         overlap = len(set(res_skills) & set(skill.lower() for skill in job.get("skills", [])))
         skill_score = overlap / max(len(job.get("skills", [])), 1)
-
+        
+        
         # Final weighted score
         final_score = (0.6 * float(score)) + (0.4 * skill_score)
 
