@@ -5,7 +5,7 @@ from PIL import ImageDraw
 import pandas as pd
 #import pytesseract
 #import easyocr # more accurate
-import docx2pdf # requires MSWord(Windows) to be installed
+#import docx2pdf # requires MSWord(Windows) to be installed
 #import pdf2image #requires poppler installation
 import fitz #PyMuPdf
 import tempfile
@@ -13,15 +13,16 @@ import io
 #import flask
 # import requests
 # from fastapi import FastAPI, HTTPException
-import streamlit as st
+#import streamlit as st
 # from Layout_detection_and_Semantic_segmentation import process_document_for_layout_and_semantic
-import pythoncom
+#import pythoncom
+import subprocess
+import os
+import tempfile
+import hashlib
 
 
-# ==========================================
 # PDF PARSER (Line-Based Section Detection)
-# ==========================================
-
 def pdf_resume(file):
     file.seek(0)
     file_bytes = file.read()
@@ -43,10 +44,7 @@ def pdf_resume(file):
         images.append(buf.getvalue())
     doc.close()
 
-    # ===============================
     # Simple line based parser
-    # ===============================
-
     with pdfplumber.open(io.BytesIO(file_bytes)) as pdf:
         sections = {}
         section_keywords = [
@@ -94,7 +92,7 @@ def pdf_resume(file):
                     if current_section not in sections:
                         sections[current_section] = []
 
-                    continue  # IMPORTANT: prevents heading itself from being added
+                    continue  #prevents heading itself from being added
 
                 # Collect content under active section
                 if current_section:
@@ -105,28 +103,44 @@ def pdf_resume(file):
     return result_text, headings, headings_area, images, word_bboxes
 
 
-# ==========================================
-# DOCX PARSER
-# ==========================================
-
+#docx parser
 def docx_resume(file):
-    with tempfile.TemporaryDirectory() as tmpdir:
-        docx_path = os.path.join(tmpdir, file.name)
-        file.seek(0)
+
+    # Create a persistent cache directory
+    CACHE_DIR = "cache_pdfs"
+    os.makedirs(CACHE_DIR, exist_ok=True)
+
+    file.seek(0)
+    file_bytes = file.read()
+
+    # Generate unique hash for file
+    file_hash = hashlib.md5(file_bytes).hexdigest()
+
+    # Define cached paths
+    docx_path = os.path.join(CACHE_DIR, f"{file_hash}.docx")
+    pdf_path = os.path.join(CACHE_DIR, f"{file_hash}.pdf")
+
+    # Save docx if not cached
+    if not os.path.exists(docx_path):
         with open(docx_path, "wb") as f:
-            f.write(file.read())
+            f.write(file_bytes)
 
-        pdf_path = os.path.join(tmpdir, "resume.pdf")
-
-        pythoncom.CoInitialize()
+    # Convert if pdf not cached
+    if not os.path.exists(pdf_path):
         try:
-            docx2pdf.convert(docx_path, pdf_path)
-        finally:
-            pythoncom.CoUninitialize()
+            subprocess.run([
+                "soffice",
+                "--headless",
+                "--convert-to", "pdf",
+                docx_path,
+                "--outdir", CACHE_DIR
+            ], check=True)
+        except subprocess.CalledProcessError as e:
+            raise RuntimeError(f"LibreOffice conversion failed: {e}")
 
-        with open(pdf_path, "rb") as pdf_file:
-            return pdf_resume(pdf_file)
-
+    with open(pdf_path, "rb") as pdf_file:
+        return pdf_resume(pdf_file)
+    
 
 # ==========================================
 # STREAMLIT UI

@@ -49,7 +49,8 @@ def analyse():
     response = render_template(
        'job.html',
        jobs = matches,
-       sections = sections
+       sections = sections,
+       resume_text = text
        )
     
     render_end = time.perf_counter()
@@ -66,4 +67,4 @@ def analyse():
 
 
 if __name__=='__main__':
-    app.run(debug = True)
+    app.run(host='0.0.0.0', port=5000, debug = True)

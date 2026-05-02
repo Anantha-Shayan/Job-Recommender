@@ -1,12 +1,24 @@
 from sentence_transformers import SentenceTransformer
-import faiss
+from endee import EndeeClient, Precision
+import openai
 import numpy as np
 import pickle
 import json
 import re
 import time
+import os
 
-model = SentenceTransformer("all-MiniLM-L6-v2")
+
+model = None
+
+def get_model():
+    global model
+    if model is None:
+        model = SentenceTransformer("all-MiniLM-L6-v2")
+    return model
+
+ENDEE_URL = os.getenv("ENDEE_URL", "http://endee:8080")
+client = EndeeClient(ENDEE_URL)
 
 # Store Jobs in FAISS
 def build_job_vector_store():
@@ -27,23 +39,35 @@ def build_job_vector_store():
         for job in jobs
     ]
 
-    embeddings = model.encode(job_texts)
+    embeddings = get_model().encode(job_texts)
 
     dimension = embeddings.shape[1]
 
     # index = faiss.IndexFlatL2(dimension) # Eulidean dist
-    faiss.normalize_L2(embeddings)
-    index = faiss.IndexFlatIP(dimension) #dot product 
-    index.add(np.array(embeddings))
+    try:
+        client.create_index(
+            name='job_index',
+            dimension=dimension,
+            space_type="cosine",
+            precision=Precision.INT8
+        )
+    except:
+        print("Index already exists")
 
     # Save index
-    faiss.write_index(index, "jobs_faiss.index")
+    index = client.get_index('job_index')
 
-    # Save metadata
-    with open("jobs_metadata.pkl", "wb") as f:
-        pickle.dump(jobs, f)
+    points = []
+    for i, (job, vector) in enumerate(zip(jobs, embeddings)):
+        points.append({
+            "id": str(i),
+            "vector": vector.tolist(),
+            "meta": job
+        })
 
-    print(f"{len(jobs)} jobs stored in FAISS successfully.")
+    index.upsert(points)
+
+    print(f"{len(jobs)} jobs stored in Endee successfully.")
 
 # Extract years of experience from reusme
 def extract_years_of_experience(text):
@@ -72,29 +96,27 @@ def embed_resume_query(sections):
     Projects: {sections.get('projects', '')}
     """
 
-    embedding = model.encode([combined_text])
+    embedding = get_model().encode([combined_text])
 
-    return embedding
+    return embedding[0].tolist()
 
 
 # Search Matching Jobs
 def search_jobs(sections, resume_text, top_k=3):
 
-    index = faiss.read_index("jobs_faiss.index")
-
-    with open("jobs_metadata.pkl", "rb") as f:
-        jobs = pickle.load(f)
+    index = client.get_index('job_index')
 
     resume_exp = extract_years_of_experience(resume_text)
     
     query_embedding = embed_resume_query(sections)
-    faiss.normalize_L2(query_embedding)
-
-    times = []
+    results_db = index.query(
+        vector=query_embedding,
+        top_k=top_k
+    )
 
     # for _ in range(10):
     #     start = time.perf_counter()
-    distances, indices = index.search(np.array(query_embedding), top_k)
+    # distances, indices = index.search(np.array(query_embedding), top_k)
     #     end = time.perf_counter()
     #     times.append((end - start) * 1000)
 
@@ -108,23 +130,20 @@ def search_jobs(sections, resume_text, top_k=3):
             cleaned = part.strip().lower()
             if cleaned:
                 res_skills.append(cleaned)
-
-
         
-        res_skills = list(set(res_skills))
+    res_skills = list(set(res_skills))
 
     if len(res_skills) == 0:
         return []
 
-    res_skill_embed = model.encode(res_skills)
-    faiss.normalize_L2(res_skill_embed)
+    res_skill_embed = get_model().encode(res_skills)
 
     results = []
     threshold = 0.33
 
-    for score, idx in zip(distances[0], indices[0]):
-
-        job = jobs[idx]
+    for i, item in enumerate(results_db):
+        job = item["meta"]
+        score = item["similarity"]
 
         # Experience filter
         if resume_exp < job.get("min_experience", 0):
@@ -138,14 +157,9 @@ def search_jobs(sections, resume_text, top_k=3):
         final_missing = []
 
         if mis_skills:
-            mis_skills_embed = model.encode(mis_skills)
-            faiss.normalize_L2(mis_skills_embed)
+            mis_skills_embed = get_model().encode(mis_skills)
 
-            resume_text_joined = " ".join(res_skills)
             for skill, skill_emb in zip(mis_skills, mis_skills_embed):
-                if any(word in resume_text_joined for word in skill.split()):
-                    continue
-
                 similarities = np.dot(res_skill_embed, skill_emb)
 
                 if np.max(similarities) < 0.82:
@@ -159,8 +173,10 @@ def search_jobs(sections, resume_text, top_k=3):
         # Final weighted score
         final_score = (0.6 * float(score)) + (0.4 * skill_score)
 
+
         if final_score > threshold:    
-        # score > threshold because here if score is high, relevance is high. Unlike in Euclidean distance where distance would replace score and condition would be dist < threshold
+
+           # score > threshold because here if score is high, relevance is high. Unlike in Euclidean distance where distance would replace score and condition would be dist < threshold
            results.append({
                 "title": job["title"],
                 "company": job.get("company",[]),
@@ -175,7 +191,8 @@ def search_jobs(sections, resume_text, top_k=3):
                     "Strong Match" if final_score > 0.65
                     else "Good Match" if final_score > 0.45
                     else "Moderate Match"
-                )
+                ),
+                "explanation": "Your profile aligns well; detailed AI explanation is disabled for speed."
                 })
 
     return results

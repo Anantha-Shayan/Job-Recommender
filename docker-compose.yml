@@ -1,0 +1,24 @@
+version: "3.9"
+
+services:
+  endee:
+    image:  endeeio/endee-server:latest
+    container_name: endee_db
+    ports:
+      - "8080:8080"
+    volumes:
+      - endee_data:/data
+
+  backend:
+    build:
+      context: ./backend
+    environment:
+      - ENDEE_URL=http://endee:8080
+    container_name: job_recommender_backend
+    ports:
+      - "5000:5000"
+    depends_on:
+      - endee
+
+volumes:
+  endee_data:

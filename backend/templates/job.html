@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Recommendations</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+
+<div class="max-w-7xl mx-auto py-10 px-6">
+
+    <h1 class="text-4xl font-bold text-blue-600 mb-8">
+        Job Recommendations
+    </h1>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+        <!-- Sidebar -->
+        <div class="bg-white rounded-xl shadow-md p-6 h-fit">
+
+            <h2 class="text-2xl font-semibold mb-4">Resume Insights</h2>
+
+            <h3 class="font-medium text-lg mb-3">Extracted Skills</h3>
+
+            <div class="flex flex-wrap gap-2">
+
+                {% if sections.get("skills") %}
+                    {% for line in sections.get("skills", []) %}
+                        <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">
+                            {{ line }}
+                        </span>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-gray-500">No skills detected</p>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        <!-- Jobs -->
+        <div class="lg:col-span-2 space-y-6">
+
+            {% if jobs %}
+
+                {% for job in jobs %}
+
+                <div class="bg-white rounded-xl shadow-md p-6 border" data-job-index="{{ loop.index0 }}">
+
+                    <!-- Header -->
+                    <div class="flex justify-between items-start mb-4">
+
+                        <div>
+                            <h2 class="text-xl font-bold text-gray-800">
+                                {{ job.title }}
+                            </h2>
+
+                            <p class="text-gray-600">
+                                {{ job.company }} • {{ job.location }}
+                            </p>
+                        </div>
+
+                        <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold">
+                            {{ job.similarity_score }}% {{ job.match_label }}
+                        </span>
+
+                    </div>
+
+                    <!-- Description -->
+                    <div class="mb-4">
+                        <p class="text-gray-700">
+                            {{ job.description }}
+                        </p>
+                    </div>
+
+                    <!-- 🔥 AI Explanation -->
+                    <div class="mb-4">
+                        <h3 class="font-medium text-gray-700 mb-2">
+                            💡 Why this job fits you
+                        </h3>
+
+                        <div class="explanation-box bg-blue-50 text-blue-800 px-4 py-3 rounded-lg text-sm leading-relaxed whitespace-pre-line">
+                            {{ job.explaination }}
+                        </div>
+                    </div>
+
+                    <!-- Skills -->
+                    <div class="mb-4">
+
+                        <h3 class="font-medium text-gray-700 mb-2">
+                            Required Skills:
+                        </h3>
+
+                        <div class="flex flex-wrap gap-2">
+                            {% for skill in job.skills %}
+                                <span class="bg-gray-200 px-3 py-1 rounded-full text-sm">
+                                    {{ skill }}
+                                </span>
+                            {% endfor %}
+                        </div>
+
+                    </div>
+
+                    <!-- Missing Skills -->
+                    <div class="mb-4">
+
+                        <h3 class="font-medium text-gray-700 mb-2">
+                            Missing Skills:
+                        </h3>
+
+                        <div class="flex flex-wrap gap-2">
+
+                            {% if job.missing_skills %}
+                                {% for skill in job.missing_skills %}
+                                    <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm">
+                                        {{ skill }}
+                                    </span>
+                                {% endfor %}
+                            {% else %}
+                                <span class="text-green-600 font-medium">
+                                    No missing skills 🎯
+                                </span>
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                    <!-- Apply -->
+                    <div>
+                        <a href="{{ job.url }}"
+                           target="_blank"
+                           class="inline-block bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700">
+                           Apply Now
+                        </a>
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="bg-white rounded-xl shadow-md p-8 text-center">
+                    <h2 class="text-2xl font-semibold text-gray-700 mb-2">
+                        No Matching Jobs Found
+                    </h2>
+                    <p class="text-gray-500">
+                        Try another resume.
+                    </p>
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div></div>
+
+</div>
+
+<script>
+// Fetch explanations asynchronously
+document.addEventListener('DOMContentLoaded', function() {
+    const jobCards = document.querySelectorAll('[data-job-index]');
+    const jobData = JSON.parse('{{ jobs | tojson }}');
+    const resumeText = {{ resume_text | tojson }};
+    
+    jobData.forEach((job, index) => {
+        const card = document.querySelector(`[data-job-index="${index}"]`);
+        if (!card) return;
+        
+        // Skip if already loaded or doesn't need loading
+        const explanationBox = card.querySelector('.explanation-box');
+        if (!explanationBox) return;
+        
+        // Only fetch for first 2 jobs (to save API cost)
+        if (index >= 2) {
+            explanationBox.textContent = 'Explanation skipped to save cost.';
+            return;
+        }
+        
+        // Fetch explanation asynchronously
+        fetch('/get-explanation', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                resume_text: resumeText,
+                job_index: index,
+                job: job
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            explanationBox.textContent = data.explanation;
+        })
+        .catch(error => {
+            console.error('Error fetching explanation:', error);
+            explanationBox.textContent = 'Unable to load explanation. Your profile aligns with key skills required for this role.';
+        });
+    });
+});
+</script>
+</body>
+</html>

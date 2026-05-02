@@ -4,6 +4,8 @@ tech_job_listing/node_modules/
 
 # Python / venv
 JRenv/
+__pycahche__/
+*.pyc
 
 # Editor / OS
 .vscode/
@@ -11,6 +13,8 @@ JRenv/
 
 # env files
 .env
+
+*.pdf
 
 # resume files for testing
 recommender/RESUME.pdf

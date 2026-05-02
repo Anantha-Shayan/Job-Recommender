@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual env
+venv/
+.venv/
+JRenv/
+
+# Git
+.git
+.gitignore
+
+# Data
+*.json
+*.csv
+*.pkl
+*.index
+static/uploads/
+
+# Models (VERY IMPORTANT)
+*.bin
+*.pt
+*.onnx
+*.safetensors
+
+# Node (if exists)
+node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
