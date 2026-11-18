@@ -1,5 +1,5 @@
 from sentence_transformers import SentenceTransformer
-from endee import EndeeClient, Precision
+from endee import Endee as EndeeClient, Precision
 import openai
 import numpy as np
 import pickle
@@ -7,6 +7,7 @@ import json
 import re
 import time
 import os
+from requests.exceptions import RequestException
 
 
 model = None
@@ -17,27 +18,56 @@ def get_model():
         model = SentenceTransformer("all-MiniLM-L6-v2")
     return model
 
-ENDEE_URL = os.getenv("ENDEE_URL", "http://endee:8080")
-client = EndeeClient(ENDEE_URL)
+ENDEE_URL = os.getenv("ENDEE_URL", "http://127.0.0.1:8080")
+client = EndeeClient()
+client.set_base_url(f"{ENDEE_URL.rstrip('/')}/api/v1")
 
-# Store Jobs in FAISS
-def build_job_vector_store():
 
+def load_jobs():
     with open("jobs.json", "r", encoding="utf-8") as f:
         jobs = json.load(f)
 
     for job in jobs:
         job["min_experience"] = extract_min_experience(job.get("experience", "0"))
 
-    job_texts = [
-        f"""
-        Title: {job['title']}
-        Skills: {', '.join(job.get('skills', []))}
-        Description: {job.get('description', '')}
-        Company: {job.get('company', '')}
-        """
-        for job in jobs
+    return jobs
+
+
+def job_to_text(job):
+    return f"""
+    Title: {job['title']}
+    Skills: {', '.join(job.get('skills', []))}
+    Description: {job.get('description', '')}
+    Company: {job.get('company', '')}
+    """
+
+
+def local_query_jobs(query_embedding, top_k):
+    jobs = load_jobs()
+    job_texts = [job_to_text(job) for job in jobs]
+    job_embeddings = get_model().encode(job_texts)
+
+    query = np.array(query_embedding, dtype=np.float32)
+    vectors = np.array(job_embeddings, dtype=np.float32)
+
+    query_norm = np.linalg.norm(query)
+    vector_norms = np.linalg.norm(vectors, axis=1)
+    similarities = vectors @ query / np.maximum(vector_norms * query_norm, 1e-12)
+
+    top_indices = np.argsort(similarities)[::-1][:top_k]
+    return [
+        {
+            "meta": jobs[index],
+            "similarity": float(similarities[index])
+        }
+        for index in top_indices
     ]
+
+# Store Jobs in FAISS
+def build_job_vector_store():
+
+    jobs = load_jobs()
+    job_texts = [job_to_text(job) for job in jobs]
 
     embeddings = get_model().encode(job_texts)
 
@@ -104,15 +134,18 @@ def embed_resume_query(sections):
 # Search Matching Jobs
 def search_jobs(sections, resume_text, top_k=3):
 
-    index = client.get_index('job_index')
-
     resume_exp = extract_years_of_experience(resume_text)
     
     query_embedding = embed_resume_query(sections)
-    results_db = index.query(
-        vector=query_embedding,
-        top_k=top_k
-    )
+    try:
+        index = client.get_index('job_index')
+        results_db = index.query(
+            vector=query_embedding,
+            top_k=top_k
+        )
+    except RequestException as exc:
+        print(f"Endee unavailable at {client.base_url}; using local search fallback. {exc}")
+        results_db = local_query_jobs(query_embedding, top_k)
 
     # for _ in range(10):
     #     start = time.perf_counter()
